@@ -1,5 +1,4 @@
 <?php
-
 	$db_name = "gaurav99_url";
 	$user_name = "gaurav99_url";
 	$pass = "gaurav12345";
