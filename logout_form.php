@@ -1,10 +1,11 @@
 <?php
 	session_start();
-	session_destroy();
+	session_destroy(); //logout
+	
 	if(isset($_SERVER['HTTP_REFERER']))
 	{
 		$refer=$_SERVER['HTTP_REFERER'];
-		header('Location:'.$refer);
+		header('Location:'.$refer); //redirect to page where logout button is clicked
 	}
 	else 
 	{
