@@ -1,20 +1,26 @@
 <?php 
+	session_start();
 	require ('connectivity.php'); 
-?>
-<?php
-	if(isset($_SERVER['HTTP_REFERER']) && $_SERVER['HTTP_REFERER'] == 'http://localhost/xampp/url_pro/register.php') //change after uploading on server
+	
+	if(isset($_SERVER['HTTP_REFERER']) && $_SERVER['HTTP_REFERER'] == 'http://www.vphotoshop.com/register.php') 
 	{
 		echo "You have successfully registered. Please Log in!";
 	}
+	
+	if(isset($_SESSION['username']))
+	{
+	     header('location:index.php');
+	}
+	
 	if(isset($_POST['uname']))  //check whether text fields variable is set
 	{
 		$user = $_POST['uname'];
 		$pass_hash = md5($_POST['pass']);
-		$query = "SELECT * FROM `login` WHERE `username` = '$user' AND `password`='$pass_hash' ";
-	    $result=mysql_query($query,$connection);
+		$query = "SELECT * FROM user WHERE username = '$user' AND password='$pass_hash' ";
+	    $result=mysql_query($query,$connection)or die('Query failed: ' . mysql_error());
 	    $num_rows=mysql_num_rows($result);
 	    
-	    if($num_rows==1)
+	    if($num_rows==1) //login successful
 		{
 			session_start();
 			$_SESSION['username']=$user;
@@ -22,66 +28,32 @@
 		}
 		else 
 		{
+		    
 			echo "Wrong username or password";
 		}
 	}
 ?>
 
 <html>	
-    <body>
+  <head> 
+		  <script type="text/javascript" src="js/login_form.js"></script>
+		  <title>Login</title>
+		  <center>
+			<h2 font-size="25px"><a href="index.php" >URL Shortner</a><h2>
+		  </center>
+  </head>
+  <body>
 		<form action="login_form.php" method ="post" onSubmit="return validations()" name="input">
-			<pre>
-				Handle Name :- <input type="text" name="uname" placeholder="uname" id="uname"/>
-				Password    :- <input type="text" name="pass" placeholder="pass" id="pass"/>
-				<input type="submit" name="submit" />	
-			</pre>
+			<center>
+			<table>
+			   <tr><td>Username    :- </td><td><input type="text" name="uname" placeholder="username" id="uname"/></td></tr>
+			   <tr><td>Password    :- </td><td><input type="text" name="pass" placeholder="password" id="pass"/></td></tr>
+            </table>
+				
+				
+				<input type="submit" name="submit" value="Login" />	
+			</center>
 		</form>
-		
-		<script type="text/javascript">
-	function validations()
-	{
-		if(pwdValidation() && usernameValidation())
-	    {
-	    	return true;
-	    }
-	    return false;
-	}
-	
-	function usernameValidation()
-	{
-		var uname = document.getElementById('uname').value;
-		var len = uname.length;
-		if(len > 4)
-		{
-			return true;
-		}
-		alert("Enter correct User name. ");
-		color("uname");
-		return false;
-	}
-	
-	function pwdValidation()
-	{  	
-		var p1 = document.getElementById('pass').value;  
-        var len_p1 = p1.length;
-
-        if(7 < len_p1)
-   		{
-   				return true;
-		}
-		else
-		{
-			alert("Enter correct password.");
-			color("pass");
-			return false;
-		}	
-	}
-	
-    function color(box)
-	{
-		document.getElementById(box).style.background="#FFB2B2"
-	}
-	
-	</script>    		
-	</body>
+    		
+   </body>
 </html>
