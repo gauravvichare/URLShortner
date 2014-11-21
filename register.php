@@ -1,6 +1,8 @@
 <?php
-	require ('connectivity.php');
+    ob_start();
 	session_start();
+	require ('connectivity.php');
+
 	if(isset($_SESSION['username']))
 	{
 		header('location:index.php');
@@ -8,13 +10,15 @@
 	
 	if(isset($_POST["uname"]))
 	{
-		$user = $_POST['uname'];
+		$user1 = $_POST['uname'];
+		$fname=$_POST['fname'];
+		$lname=$_POST['lname'];
 		$email = $_POST['email'];
+		
 		$pass_hash = md5($_POST['pwd']);
-		//3.query to insert
-		$query = "INSERT INTO login VALUES ('$user','$email','$pass_hash')";
-		$result = mysql_query($query,$connection);
-		echo "<br />";
+		$query = "INSERT INTO user VALUES ('$user1','$fname','$lname','$email','$pass_hash')";//check duplication//remaining
+		$result = mysql_query($query,$connection)or die('Query failed: ' . mysql_error());
+	    echo "<br />";
 		if(!$result)
 		{
 			echo "Username is already registered. Please enter different username.";
@@ -28,101 +32,28 @@
 ?>
 <html>
 	<head>
+	    <script type="text/javascript" src="js/register.js"></script>
 		<title>Register</title>
-		<h2>Sign up</h2>
+		<center>
+			<h2><a href="index.php" >URL Shortner</a><h2>
+		    <h2>Sign up</h2>
+		</center>
 	</head>
 	<body>
 		<form action="register.php" method="post" onSubmit="return validations()"  name="input">
-		    <pre>
-				User Name       : <input type="text" id="uname" name="uname" placeholder="user name"/><br />
-				Email ID        : <input type="text" id="email" name="email" placeholder="email id"/><br />
-				Password        : <input type="password" id="p1" name="pwd" placeholder="password"/><br />
-				Retype Password : <input type="password" id="p2" name="repwd" placeholder="retype password"/><br /> 
-		    			<input type="submit" name="submit" />	
-	     	</pre>
+		     <center>
+			 <table>
+				   <tr><td>User Name       :</td><td><input type="text" id="uname" name="uname" placeholder="user name"/></td></tr>
+				   <tr><td>First Name      :</td><td><input type="text" id="fname" name="fname" placeholder="First name"/></td></tr>
+				   <tr><td>Last Name       :</td><td><input type="text" id="lname" name="lname" placeholder="Last name"/></td></tr>
+				   <tr><td>Email ID        :</td><td><input type="text" id="email" name="email" placeholder="email id"/></td></tr>
+				   <tr><td>Password        :</td><td><input type="password" id="p1" name="pwd" placeholder="password"/></td></tr>
+				   <tr><td>Retype Password :</td><td><input type="password" id="p2" name="repwd" placeholder="retype password"/></td></tr>
+             </table>
+			                  <input type="submit" name="submit" />	
+			 </center>
 		</form>		
 	  
-	<script type="text/javascript">
-	function validations()
-	{
-		if(pwdValidation())
-	    {
-	    	if(emailValidation())
-	    	{
-	    		if(usernameValidation())
-	    		{
-	    			return true;
-	    		}
-	    		return false;
-	    	}
-	    	return false;
-	    }
-	    return false;
-	}
-		
-	function color()
-	{
-		document.getElementById('p1').style.background="#FFB2B2"
-		document.getElementById('p2').style.background="#FFB2B2"
-	}
-		
-	function pwdValidation()
-	{  	
-		var p1 = document.getElementById('p1').value;  
-        var p2 = document.getElementById('p2').value;  
-        var len_p1 = p1.length;
-        
-        if(7 < len_p1)
-   		{
-   			if(p1 !== p2)
-		    {
-		   		alert("Password doesn't match. Enter correct password.");
-		   		color();
-		   		return false;
-		    }  	
-			return true;
-		}
-		else
-		{
-			alert("Password length must be min 8 char");
-			color();
-			return false;
-		}	
-	}
 	
-	function emailValidation()
-	{
-		var em = document.getElementById('email').value;
-		var len = em.length;
-    	var firstat = em.indexOf("@");
-		var lastat = em.lastIndexOf("@");
-		var dotpos = em.lastIndexOf(".");
-		
-		if((firstat===lastat)&&((firstat+1)<dotpos)&&firstat!=-1&&dotpos!=-1&&(em.charAt(dotpos+2)))
-		{
-			return true;				
-		}
-		else
-		{
-			alert("Enter valid email address");
-			document.getElementById('email').style.background="#FFB2B2"
-		    return false
-		}
-	}
-		
-	function usernameValidation()
-	{
-		var uname = document.getElementById('uname').value;
-		var len = uname.length;
-		if(len > 4)
-		{
-			return true;
-		}
-		alert("Enter Username having atleast 5 chars");
-		document.getElementById('uname').style.background="#FFB2B2"
-		return false;
-	}
-
-    </script>	
 	</body>
 </html>
